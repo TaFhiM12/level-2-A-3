@@ -1,65 +1,21 @@
-````md
-# Vehicle Rental System – SQL Queries Documentation
+# Vehicle rental system
 
-## Project Overview
+## Project overview
+This project demonstrates sql queries for a vehicle rental system database. it includes practical queries for retrieving booking information, checking vehicle availability, and analyzing rental patterns.
 
-This project demonstrates the use of SQL queries in a Vehicle Rental System database. The objective is to retrieve meaningful information using joins, filtering, grouping, and aggregate functions while following standard relational database principles.
+## sql queries
 
-The database consists of the following main tables:
-
-- users – stores customer information  
-- vehicles – stores vehicle details  
-- bookings – stores booking records that link users and vehicles  
-
-
-## File: `queries.sql`
-
-This file contains SQL queries that solve common business requirements in a vehicle rental system.
-
----
-
-## Query 1: Retrieve Booking Information with Customer and Vehicle Names
-
-### Requirement
-
-Retrieve booking details along with:
-- customer name  
-- vehicle name  
-- booking start date  
-- booking end date  
-- booking status  
-
-### Solution
-
+### query 1: retrieve booking details with customer and vehicle information
 ```sql
-select booking_id,
-       u.name as customer_name,
-       v.name as vehicle_name,
-       start_date,
-       end_date,
-       b.status
+select booking_id, u.name as customer_name, v.name as vehicle_name, start_date, end_date, b.status 
 from bookings b
 join vehicles v on b.vehicle_id = v.vehicle_id
 join users u on u.user_id = b.user_id;
-````
+```
 
-### Explanation
+**Explanation:** This query joins three tables to show complete booking information. it combines data from bookings, vehicles, and users tables to display who booked which vehicle and when. this is useful for customer service and generating booking reports.
 
-* joins the bookings table with vehicles to get vehicle information
-* joins the bookings table with users to get customer information
-* returns only matching records from all three tables
-* table aliases improve query readability
-
----
-
-## Query 2: Find All Vehicles That Have Never Been Booked
-
-### Requirement
-
-Identify vehicles that have no booking history.
-
-### Solution
-
+### query 2: find vehicles that have never been booked
 ```sql
 select v.*
 from vehicles v
@@ -68,63 +24,25 @@ where b.vehicle_id is null
 order by v.vehicle_id;
 ```
 
-### Explanation
+**Explanation:** this query identifies vehicles with no booking history. it uses a left join to include all vehicles and filters for those without matching booking records. this helps identify underused vehicles in the fleet.
 
-* left join ensures all vehicles are included
-* vehicles without bookings return null values from the bookings table
-* the where condition filters only unbooked vehicles
-
----
-
-## Query 3: Find Available Cars
-
-### Requirement
-
-Retrieve all vehicles that:
-
-* are currently available
-* are of type car
-
-### Solution
-
+### query 3: find available vehicles of specific type
 ```sql
-select *
+select * 
 from vehicles
-where status = 'available'
-  and type = 'car';
+where status = 'available' and type = 'car';
 ```
 
-### Explanation
+**Explanation:** This simple query filters vehicles based on availability and type. it shows all cars currently available for rental, helping customers and staff check real-time availability.
 
-* the where clause applies multiple conditions
-* only vehicles matching both conditions are returned
-
----
-
-## Query 4: Vehicles with More Than 2 Bookings
-
-### Requirement
-
-Find vehicles that have been booked more than two times and display:
-
-* vehicle name
-* total number of bookings
-
-### Solution
-
+### query 4: find frequently booked vehicles
 ```sql
-select v.name as vehicle_name,
-       count(b.booking_id) as total_bookings
+select v.name as vehicle_name, count(b.booking_id) as total_bookings
 from vehicles v
 join bookings b on v.vehicle_id = b.vehicle_id
 group by v.vehicle_id, v.name
 having count(b.booking_id) > 2;
 ```
 
-### Explanation
-
-* count calculates the total number of bookings per vehicle
-* group by groups records by vehicle
-* having filters grouped results based on aggregate values
-* only vehicles with more than two bookings are shown
+**Explanation:** This query analyzes booking patterns by counting how many times each vehicle has been rented. it groups bookings by vehicle and shows only those with more than 2 bookings, helping identify popular vehicles in the fleet.
 
